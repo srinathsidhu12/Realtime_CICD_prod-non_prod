@@ -26,15 +26,14 @@ pipeline {
                     credentialsId: 'dockerhub-id',
                     usernameVariable: 'DOCKER_USER',
                     passwordVariable: 'DOCKER_PASS'
-                )]) }
-                 {
+                )]){
                  sh """
                    echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin
                    docker pull ${DOCKER_IMAGE}:${IMAGE_TAG}
                  """
                 }
             }
-
+         }
         stage('Manual Approval') {
             steps {
                 input message: "Approve deployment of image ${IMAGE_TAG} to PRODUCTION?"
@@ -45,7 +44,7 @@ pipeline {
             steps {
               withCredentials([file(credentialsId: 'kubeconfig_prod', variable: 'KUBECONFIG')]) {
                 sh """
-                  sed -i 's|image:.*|image: ${DOCKER_IMAGE}:${IMAGE_TAG}|'  ./k8s/prod/deployment.yaml
+                  sed -i 's|image:.*|image: ${DOCKER_IMAGE}:${IMAGE_TAG}|'  ./k8s/prod/k8s-deployment.yaml
                   kubectl apply -f ./k8s/prod/k8s-deployment.yaml
                   kubectl apply -f ./k8s/prod/k8s-service.yaml
                   kubectl rollout status deployment/${K8S_DEPLOYMENT_NAME}
