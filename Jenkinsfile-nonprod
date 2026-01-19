@@ -43,13 +43,13 @@ pipeline {
             }
         }
 
-        stage('Deploy to Kubernetes') {
+        stage('Deploy to Non-prod Kubernetes') {
             steps {
-                withCredentials([file(credentialsId: 'kubeconfig', variable: 'KUBECONFIG')]) {
+                withCredentials([file(credentialsId: 'kubeconfig_nonprod', variable: 'KUBECONFIG')]) {
                     sh """
-                     sed -i "s|image:.*|image: ${DOCKER_HUB_REPO}:${IMAGE_TAG}|" ./k8s/k8s-deployment.yaml
-                     kubectl apply -f ./k8s/k8s-deployment.yaml
-                     kubectl apply -f ./k8s/k8s-service.yaml
+                     sed -i "s|image:.*|image: ${DOCKER_HUB_REPO}:${IMAGE_TAG}|" ./k8s/nonprod/k8s-deployment.yaml
+                     kubectl apply -f ./k8s/nonprod/k8s-deployment.yaml
+                     kubectl apply -f ./k8s/nonprod/k8s-service.yaml
                      kubectl rollout status deployment/${K8S_DEPLOYMENT_NAME}
                     """
                   }
@@ -59,10 +59,10 @@ pipeline {
 
     post {
         success {
-            echo " Successfully deployed image: ${DOCKER_HUB_REPO}:${IMAGE_TAG}"
+            echo " Non-prod deployment successful: ${DOCKER_HUB_REPO}:${IMAGE_TAG}"
         }
         failure {
-            echo "Deployment failed!"
+            echo "Non-prod Deployment failed!"
         }
     }
 }
