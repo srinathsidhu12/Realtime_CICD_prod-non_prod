@@ -1,6 +1,5 @@
 pipeline {
     agent any
-
     parameters {
         string(
             name: 'IMAGE_TAG',
@@ -35,7 +34,6 @@ pipeline {
                  """
                 }
             }
-        }
 
         stage('Manual Approval') {
             steps {
@@ -53,8 +51,9 @@ pipeline {
                   kubectl rollout status deployment/${K8S_DEPLOYMENT_NAME}
                 """
             }
-        }
-
+         }
+       }
+    }
     post {
         success {
             echo "Production deployment completed successfully."
