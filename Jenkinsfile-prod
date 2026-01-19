@@ -35,6 +35,7 @@ pipeline {
             }
          }
         stage('Manual Approval') {
+            agent none
             steps {
                 input message: "Approve deployment of image ${IMAGE_TAG} to PRODUCTION?"
             }
