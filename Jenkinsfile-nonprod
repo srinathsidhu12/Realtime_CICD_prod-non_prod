@@ -10,19 +10,9 @@ pipeline {
        maven 'Maven-3.9.11'
     }
     stages {
-        stage('Validate Branch') {
-            steps {
-                script {
-                    echo "Triggered branch: ${env.BRANCH_NAME}"
-                    if (env.BRANCH_NAME != 'origin/develop_non_prod') {
-                        error("This non-prod pipeline runs only for 'develop_non_prod' branch")
-                    }
-                }
-            }
-        }
         stage('Checkout Code') {
             steps {
-                git 'https://github.com/srinathsidhu12/Realtime_CICD_prod-non_prod.git'	
+                checkout scm
             }
         }
         stage('Maven Build') {
